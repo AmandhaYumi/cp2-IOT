@@ -1,0 +1,892 @@
+[
+    {
+        "id": "d0690566f007d6de",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5f0de9ef4a3a0f82",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/temperatura",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 730,
+        "y": 120,
+        "wires": [
+            [
+                "d520e4323bf162a1"
+            ]
+        ]
+    },
+    {
+        "id": "8e063670daff1e9b",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/umidade",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 240,
+        "wires": [
+            [
+                "252cdd967f8cce5b"
+            ]
+        ]
+    },
+    {
+        "id": "d52990f6e40f540e",
+        "type": "inject",
+        "z": "d0690566f007d6de",
+        "name": "Inject",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 650,
+        "y": 60,
+        "wires": [
+            [
+                "ec46e2414fbda834"
+            ]
+        ]
+    },
+    {
+        "id": "ec46e2414fbda834",
+        "type": "http request",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openweathermap.org/data/2.5/weather?q=Sao%20Paulo&appid=b205a2ef99e9f36e6290ae1a27a91dee&units=metric",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 820,
+        "y": 60,
+        "wires": [
+            [
+                "2419aec87e11adea"
+            ]
+        ]
+    },
+    {
+        "id": "2419aec87e11adea",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "Extrair temp externa",
+        "func": "msg.payload = msg.payload.main.temp;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 60,
+        "wires": [
+            [
+                "a0f0bb725a68590f"
+            ]
+        ]
+    },
+    {
+        "id": "c010c4c1b4f77e19",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "function nivel",
+        "func": "let nivel = parseFloat(msg.payload);\n\nif (isNaN(nivel)) {\n    msg.payload = \"Sem dados ainda\";\n    return msg;\n}\n\nif (nivel < 10) {\n    msg.payload = \"Nível de água BAIXO!\";\n} else {\n    msg.payload = \"Nível de água OK\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 180,
+        "wires": [
+            [
+                "61aec2934d73ba52"
+            ]
+        ]
+    },
+    {
+        "id": "14852b875fb3f4d0",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "Salvar dados de temperatura",
+        "func": "let temp = parseFloat(msg.payload);\n\nif (isNaN(temp)) {\n    return null;\n}\n\nmsg.topic = \"INSERT INTO estufa (temperatura) VALUES (?)\";\nmsg.payload = [temp];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 520,
+        "wires": [
+            [
+                "35de4fc51bc96a18"
+            ]
+        ]
+    },
+    {
+        "id": "d520e4323bf162a1",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "function temperatura",
+        "func": "let temp = parseFloat(msg.payload);\n\nif (isNaN(temp)) {\n    msg.payload = \"Sem dados ainda\";\n    return msg;\n}\n\nif (temp > 30) {\n    msg.payload = \" Temperatura ALTA!\";\n} else {\n    msg.payload = \" Temperatura OK\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 120,
+        "wires": [
+            [
+                "7ee9ec215bbd7b18"
+            ]
+        ]
+    },
+    {
+        "id": "7ee9ec215bbd7b18",
+        "type": "ui_text",
+        "z": "d0690566f007d6de",
+        "group": "11df9a0cbe18516e",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Alerta temperatura",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1210,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "61aec2934d73ba52",
+        "type": "ui_text",
+        "z": "d0690566f007d6de",
+        "group": "11df9a0cbe18516e",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "Alerta Nivel de água",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1180,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b8aa8812ac17dcac",
+        "type": "debug",
+        "z": "d0690566f007d6de",
+        "name": "Dados temperatura",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1430,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "faa3811200cdeb0c",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/nivel_agua",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 180,
+        "wires": [
+            [
+                "c010c4c1b4f77e19"
+            ]
+        ]
+    },
+    {
+        "id": "35de4fc51bc96a18",
+        "type": "sqlite",
+        "z": "d0690566f007d6de",
+        "mydb": "fb54210a5c088395",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "",
+        "x": 1220,
+        "y": 520,
+        "wires": [
+            [
+                "b8aa8812ac17dcac"
+            ]
+        ]
+    },
+    {
+        "id": "252cdd967f8cce5b",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "function umidade",
+        "func": "let umidade = parseFloat(msg.payload);\n\nif (isNaN(umidade)) {\n    msg.payload = \"Sem dados ainda\";\n    return msg;\n}\n\nif (umidade < 40) {\n    msg.payload = \"Umidade BAIXA!\";\n} else if (umidade > 80) {\n    msg.payload = \"Umidade ALTA!\";\n} else {\n    msg.payload = \"Umidade OK\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 240,
+        "wires": [
+            [
+                "c80a26506f017e8b"
+            ]
+        ]
+    },
+    {
+        "id": "c80a26506f017e8b",
+        "type": "ui_text",
+        "z": "d0690566f007d6de",
+        "group": "11df9a0cbe18516e",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "Alerta Umidade",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1200,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "4af0fdba8b871a93",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/temperatura",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 730,
+        "y": 320,
+        "wires": [
+            [
+                "90c56f74f5782a83"
+            ]
+        ]
+    },
+    {
+        "id": "715817eb06e581a4",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/umidade",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 440,
+        "wires": [
+            [
+                "1b846a449a3b187b"
+            ]
+        ]
+    },
+    {
+        "id": "987a1ea17d5d6d1f",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/nivel_agua",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 380,
+        "wires": [
+            [
+                "9d546f862e3f681c"
+            ]
+        ]
+    },
+    {
+        "id": "a0f0bb725a68590f",
+        "type": "ui_gauge",
+        "z": "d0690566f007d6de",
+        "name": "Temperatura Externa",
+        "group": "11df9a0cbe18516e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperatura Externa",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1280,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "90c56f74f5782a83",
+        "type": "ui_gauge",
+        "z": "d0690566f007d6de",
+        "name": "Temperatura",
+        "group": "11df9a0cbe18516e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperatura ",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 930,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "9d546f862e3f681c",
+        "type": "ui_gauge",
+        "z": "d0690566f007d6de",
+        "name": "Nivel água",
+        "group": "11df9a0cbe18516e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Nivel água",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 930,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "1b846a449a3b187b",
+        "type": "ui_gauge",
+        "z": "d0690566f007d6de",
+        "name": "Umidade",
+        "group": "11df9a0cbe18516e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Umidade",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 920,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "bbc49c4df951adb2",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/temperatura",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 730,
+        "y": 520,
+        "wires": [
+            [
+                "14852b875fb3f4d0"
+            ]
+        ]
+    },
+    {
+        "id": "907edbb8db85f95e",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/umidade",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 640,
+        "wires": [
+            [
+                "2ee7d00a45a8b7a9"
+            ]
+        ]
+    },
+    {
+        "id": "a1a7675df77403c2",
+        "type": "mqtt in",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "topic": "estufa/nivel_agua",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7bf3ab0ba98a9e85",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 720,
+        "y": 580,
+        "wires": [
+            [
+                "2b54c2c4665feb1f"
+            ]
+        ]
+    },
+    {
+        "id": "2b54c2c4665feb1f",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "Salvar dados nivel de água",
+        "func": "let nivel = parseFloat(msg.payload);\n\nif (isNaN(nivel)) {\n    return null;\n}\n\nmsg.topic = \"INSERT INTO estufa (nivel_agua) VALUES (?)\";\nmsg.payload = [nivel];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 580,
+        "wires": [
+            [
+                "11ec2fe2610367c9"
+            ]
+        ]
+    },
+    {
+        "id": "2ee7d00a45a8b7a9",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "Salvar dados de umidade",
+        "func": "let umidade = parseFloat(msg.payload);\n\nif (isNaN(umidade)) {\n    return null;\n}\n\nmsg.topic = \"INSERT INTO estufa (umidade) VALUES (?)\";\nmsg.payload = [umidade];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 990,
+        "y": 640,
+        "wires": [
+            [
+                "3dd50b88c1497643"
+            ]
+        ]
+    },
+    {
+        "id": "11ec2fe2610367c9",
+        "type": "sqlite",
+        "z": "d0690566f007d6de",
+        "mydb": "fb54210a5c088395",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "",
+        "x": 1220,
+        "y": 580,
+        "wires": [
+            [
+                "e778a4519d60b498"
+            ]
+        ]
+    },
+    {
+        "id": "3dd50b88c1497643",
+        "type": "sqlite",
+        "z": "d0690566f007d6de",
+        "mydb": "fb54210a5c088395",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "",
+        "x": 1220,
+        "y": 640,
+        "wires": [
+            [
+                "5f4b5ab2c5652b60"
+            ]
+        ]
+    },
+    {
+        "id": "e778a4519d60b498",
+        "type": "debug",
+        "z": "d0690566f007d6de",
+        "name": "Dados nivel de água",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "5f4b5ab2c5652b60",
+        "type": "debug",
+        "z": "d0690566f007d6de",
+        "name": "Dados de umidade",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1430,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "775031227cc1d946",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "tabela",
+        "func": "msg.topic = `\nCREATE TABLE estufa (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    temperatura REAL,\n    umidade REAL,\n    nivel_agua REAL,\n    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n)\n`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 700,
+        "wires": [
+            [
+                "492f388385e85dcd"
+            ]
+        ]
+    },
+    {
+        "id": "89dc48cd7f1af39f",
+        "type": "debug",
+        "z": "d0690566f007d6de",
+        "name": "tabela",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1390,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "492f388385e85dcd",
+        "type": "sqlite",
+        "z": "d0690566f007d6de",
+        "mydb": "fb54210a5c088395",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "",
+        "x": 1220,
+        "y": 700,
+        "wires": [
+            [
+                "89dc48cd7f1af39f"
+            ]
+        ]
+    },
+    {
+        "id": "315328dd6b81d4c7",
+        "type": "function",
+        "z": "d0690566f007d6de",
+        "name": "mostrar os dados",
+        "func": "msg.topic = \"SELECT * FROM estufa;\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 760,
+        "wires": [
+            [
+                "b67e08749ce814b9"
+            ]
+        ]
+    },
+    {
+        "id": "b67e08749ce814b9",
+        "type": "sqlite",
+        "z": "d0690566f007d6de",
+        "mydb": "fb54210a5c088395",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "",
+        "x": 1220,
+        "y": 760,
+        "wires": [
+            [
+                "6a27e2f1ac5eccc5"
+            ]
+        ]
+    },
+    {
+        "id": "6a27e2f1ac5eccc5",
+        "type": "debug",
+        "z": "d0690566f007d6de",
+        "name": "mostrar os dados",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1430,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "103741e9f440212f",
+        "type": "inject",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 700,
+        "y": 700,
+        "wires": [
+            [
+                "775031227cc1d946"
+            ]
+        ]
+    },
+    {
+        "id": "3279ea9e9ddd8d8e",
+        "type": "inject",
+        "z": "d0690566f007d6de",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 700,
+        "y": 760,
+        "wires": [
+            [
+                "315328dd6b81d4c7"
+            ]
+        ]
+    },
+    {
+        "id": "7bf3ab0ba98a9e85",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "25ab90d2177e47d6a984c74c77b36363.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "11df9a0cbe18516e",
+        "type": "ui_group",
+        "name": "Sensores",
+        "tab": "efecc906deef95d3",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "fb54210a5c088395",
+        "type": "sqlitedb",
+        "db": "estufa.db",
+        "mode": "RWC"
+    },
+    {
+        "id": "efecc906deef95d3",
+        "type": "ui_tab",
+        "name": "Estufa",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "1fbff8a06c32ea52",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6",
+            "node-red-node-sqlite": "2.0.1"
+        }
+    }
+]
