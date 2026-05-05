@@ -1,4 +1,4 @@
-# cP2- 🌱 Monitoramento de Estufa com IoT
+# CP2 - 🌱 Monitoramento de Estufa com IoT
 
 ## 📌 Descrição do Projeto
 
@@ -127,35 +127,15 @@ Também há:
 
 ## ▶️ Como Executar
 
+1. Abrir no Wokwi
+https://wokwi.com/projects/463187589813602305
+Importar o codigo.ino
+Importar o node.json
+Rodar o circuito simulado
 
----
-
-## 📁 Estrutura do Repositório
-
-```
-/esp32
-  └── codigo.ino
-
-/node-red
-  └── fluxo.json
-
-/database
-  └── script.sql
-
-/README.md
-```
-
----
-
-## 🎯 Aplicação
-
-O sistema simula uma **estufa inteligente**, permitindo monitoramento contínuo das condições ambientais e auxiliando na tomada de decisões.
-
----
-
-## 🎥 Demonstração
-
-Link:
+3. Observar o funcionamento
+sensores simulados
+ESP32 rodando código Arduino
 
 ---
 
@@ -167,8 +147,3 @@ Link:
 
 ---
 
-## ✅ Conclusão
-
-O projeto demonstra a integração completa de um sistema IoT, desde a coleta de dados até a visualização e armazenamento, utilizando boas práticas de arquitetura e comunicação entre sistemas.
-
----
