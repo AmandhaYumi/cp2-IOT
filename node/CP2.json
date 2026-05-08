@@ -827,7 +827,7 @@
         "id": "7bf3ab0ba98a9e85",
         "type": "mqtt-broker",
         "name": "",
-        "broker": "25ab90d2177e47d6a984c74c77b36363.s1.eu.hivemq.cloud",
+        "broker": "58d56f41a21e404084a39947b30d44ab.s1.eu.hivemq.cloud",
         "port": "8883",
         "tls": "",
         "clientid": "",
@@ -881,7 +881,7 @@
         "hidden": false
     },
     {
-        "id": "1fbff8a06c32ea52",
+        "id": "c06a6b33ee6f0421",
         "type": "global-config",
         "env": [],
         "modules": {

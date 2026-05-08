@@ -6,7 +6,7 @@
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
-const char* mqtt_server = "2c5db6a0a1ee49b4b7b199c186dd3dd7.s1.eu.hivemq.cloud";
+const char* mqtt_server = "58d56f41a21e404084a39947b30d44ab.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
 
 const char* mqtt_user = "Dobuu";

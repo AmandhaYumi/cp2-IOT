@@ -128,7 +128,7 @@ Também há:
 ## ▶️ Como Executar
 
 1. Abrir no Wokwi
-https://wokwi.com/projects/463187589813602305
+https://wokwi.com/projects/462949757727073281
 Importar o codigo.ino
 Importar o node.json
 Rodar o circuito simulado
